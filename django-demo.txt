@@ -1,0 +1,3 @@
+
+Django中创建项目 ： django-admin.py startproject  project
+Django创建app命令： python manage.py startapp  myApp
