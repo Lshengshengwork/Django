@@ -1,3 +1,29 @@
+Lshengshengwork
+echo "# Django" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/Lshengshengwork/Django.git
+git push -u origin master
 
 Django中创建项目 ： django-admin.py startproject  project
 Django创建app命令： python manage.py startapp  myApp
+
+生成迁移文件： python manage.py makemigrations   在migrations目录下生成一个迁移文件，此时数据库中还没有生成表
+执行迁移  ：  python manage.py migrate      相当于执行sql语句创建数据表
+测试数据操作： 1. dos窗口输入   < python manage.py shell >  
+			   2. 导入一些包：  from myApp.models import Grades,Students
+								from django.utils import timezone
+								from datetime import *
+			   3. 查询所有数据 ： 1.   Grades.objects.all()
+			   
+			   4. 添加数据 ： grade1 = Grades()
+							  grade1.gname = "python04"
+							  grade1.gdate = datetime(year=2019,month=1,day=13)
+							  grade1.ggirlnum = 3
+							  grade1.gboynum = 70
+							  grade1.save()
+			   5.  查看某个对象：  Grades.objects.get(pk=2)
+			   6.  修改数据  ： grade1.gboynum = 60
+								grade1.save()
+			   7. 删除数据  ： grade1.delete()    注意：该方法是物理删除——数据库中的表里的数据被删除了
