@@ -27,3 +27,89 @@ Django创建app命令： python manage.py startapp  myApp
 			   6.  修改数据  ： grade1.gboynum = 60
 								grade1.save()
 			   7. 删除数据  ： grade1.delete()    注意：该方法是物理删除——数据库中的表里的数据被删除了
+			   
+			   
+第二天学习：
+
+启动服务器：  python manage.py runserver ip:port
+			ip可以不写，不写的话代表本机，  端口号默认是8000
+			说明： 这是一个纯python写的轻量级web服务器，仅仅在开发测试中使用
+			
+			
+Admin站点管理： 
+1. 概述：   内容发布： 负责添加 修改 删除内容
+			公告访问：
+			
+2.  配置Admin应用： 在settings.py 文件中INSTALLED_APPS 添加 'django.contrib.admin'   ； 一般都是默认添加上
+3.  创建管理员用户 ： 执行 < python manage.py createsuperuser >    
+					  依次输入用户名 邮箱 密码
+	进入管理员页面就是 127.0.0.1:8000/admin  进入时是英文，需要汉化
+	汉化： 在settings.py 文件中 修改： LANGUAGE_CODE = 'zh-Hans'    TIME_ZONE = 'Asia/Shanghai'
+4. 管理数据表
+	修改admin.py 文件，例子：  
+							from .models import Grades,Students
+							# 注册
+							admin.site.register(Grades)
+							admin.site.register(Students)
+							
+	自定义管理页面： 
+		列表页属性： list_display  显示字段  ； list_filter  过滤字段 ；  search_fields   搜索字段  ； list_per_page  分页 
+				代码： class GradesAdmin(admin.ModelAdmin):
+						#列表页属性
+						list_display = ['pk','gname','gdate','ggirlnum','gboynum','isDelete']
+						list_filter = ['gname']
+						search_fields = ['gname']
+						list_per_page = 5 
+						
+		添加 、 修改页属性： fields  属性的先后顺序 ；  fieldsets  给属性分组
+		注意： fields 和 fieldsets 不能同时使用
+	全部代码：  from .models import Grades,Students
+				# 注册
+				class GradesAdmin(admin.ModelAdmin):
+					#列表页属性
+					list_display = ['pk','gname','gdate','ggirlnum','gboynum','isDelete']
+					list_filter = ['gname']
+					search_fields = ['gname']
+					list_per_page = 5
+
+					#添加 、 修改 页属性
+					# fields = ['ggirlnum','gboynum','gname','gdate','isDelete']
+					fieldsets = [
+						("num",{"fields":['ggirlnum','gboynum']}),
+						("base",{"fields":['gname','gdate','isDelete']}),
+					]
+
+				admin.site.register(Grades,GradesAdmin)
+				admin.site.register(Students)
+					
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

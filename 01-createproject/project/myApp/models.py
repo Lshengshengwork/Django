@@ -10,7 +10,7 @@ class Grades(models.Model):
     gboynum = models.IntegerField()
     isDelete = models.BooleanField(default=False)
     def __str__(self):
-        return "%s-%s-%s-%s"%(self.gname,self.ggirlnum,self.gboynum,self.gdate)
+        return self.gname
 
 
 
@@ -22,3 +22,5 @@ class Students(models.Model):
     isDelete = models.BooleanField(default=False)
     # 关联外键
     sgrade = models.ForeignKey("Grades")
+    def __str__(self):
+        return self.sname
