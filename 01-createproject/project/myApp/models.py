@@ -24,3 +24,6 @@ class Students(models.Model):
     sgrade = models.ForeignKey("Grades")
     def __str__(self):
         return self.sname
+
+class Temptable(models.Model):
+    a = models.BooleanField(default=True)
