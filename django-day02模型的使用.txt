@@ -123,7 +123,56 @@
 									
 				
 				
-	7. 模型查询：			
+	7. 模型查询：	
+			概述： 1. 查询集表示从数据库获取的对象集合
+				   2. 查询集可以有多个过滤器
+				   3. 过滤器就是一个函数，基于所给的参数限制查询集结果
+				   4. 从sql角度来说，查询集和select语句等价，过滤器就像where条件
+			
+			查询集：1. 在管理器上调用过滤器方法 返回查询集
+					2. 查询集经过过滤器筛选后返回新的查询集，所以可以写成链式调用
+					3. 惰性执行  ：  创建查询集不会带来任何数据的访问，直到调用数据时，才会访问数据
+					4. 直接访问数据的情况： 1） 迭代
+											2） 序列化
+											3） 与if合用
+					5. 返回查询集的方法称为过滤器： 1）  all()         返回查询集中所有数据
+													2)	 filter()      返回符合条件的数据      两种用法：1. filter(键=值)  filter(键=值,键=值)  ; 2. filter(键=值).filter(键=值) ；多个条件就是且的关系
+													3)	 exclude()	   过滤掉符合条件的数据
+													4）	 order_by()	   排序 
+													5）  values()	   一条数据就是一个对象(字典)，返回一个列表
+													
+					6.  返回单个数据：	1） get()		返回一个满足条件的对象 。 
+														注意： 如果没有找到符合条件的对象，会引发"模型类.DoesNotExist"异常  --用try处理就行
+															   如果找到多个对象，会引发"模型类.MultipleObjectsReturned"异常
+										2)	count()		返回查询集中的对象个数
+										3)	first()		返回查询集中第一个对象
+										4)	last()		返回查询集中最后一个对象
+										5)	exists()	判断查询集中是否有数据，如果有数据，返回True，没有数据返回False
+					
+					7.  限制查询集：	查询集返回列表，可以使用下标的方法进行限制，等同于sql中的limit语句 
+										注意：下标不能是负数。   示例 :studentsList = Students.stuObj2.all()[0:5]
+										
+					8.  查询集的缓存：  1）概述： 每个查询集都包含一个缓存，来最小化的对数据库访问
+												  在新建的查询集中，缓存首次为空，第一次对查询集求值，会发生数据缓存，Django会将查询出来的数据做一个缓存，并返回查询结果，以后的查询直接使用查询集的缓存
+												  
+					9.  字段查询：		1） 概述：  实现了sql中的where语句，作为方法filter() 、exclude() 、 get() 的参数
+												    语法：属性名称__比较运算符=值（示例：sage__>=20）
+													外键：属性名_id
+													转义：类似SQL中like语句
+												
+										2） 比较运算符
+													1. exact                   判断，大小写敏感。       filter(isDelete=False)
+													2. contains                是否包含，大小写敏感。   studentsList = Students.stuObj2.filter(sname__contains="李")
+													3. startswith、endswith    以value开头或结尾、大小写敏感。   studentsList = Students.stuObj2.filter(sname__startswith="李")
+													4. 以上四个在前面加个i，就表示不区分大小写 iexact、icontains、istartswith、iendswith
+													
+													5. isnull、isnotnull     是否为空 。 filter(sname__isnull=False)
+													
+										
+										3） 聚合函数
+										4） F对象
+										5） Q对象
+													
 				
 				
 				
