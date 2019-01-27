@@ -241,18 +241,3 @@ actions_on_top = False
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
