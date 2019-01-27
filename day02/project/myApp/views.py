@@ -31,9 +31,18 @@ def stupage(request,page):
     return render(request, 'myApp/students.html', {'students': studentsList})
 
 # 比较运算符运用之：  查询条件的使用
+from django.db.models import Max,Min,Q
 def studentsearch(request):
     # studentsList = Students.stuObj2.filter(sname__contains="李")   # 包含的使用(contains)
-    studentsList = Students.stuObj2.filter(sname__startswith="李")   # 查询以李开头的数据
+    # studentsList = Students.stuObj2.filter(sname__startswith="李")   # 查询以李开头的数据
+    # studentsList = Students.stuObj2.filter(pk__in=[2,4,5])   #把id等于 2 4 5 的值查询出来
+    # studentsList = Students.stuObj2.filter(sage__gte=30)   #把年龄大于等于30的给查询出来
+    # studentsList = Students.stuObj2.filter(lastTime__year=2017)   #根据最后修改时间是2017年的值全部查询出来
+    studentsList = Students.stuObj2.filter(Q(pk__lte=3) | Q(sage__gt=40))   #Q解决或的关系，这个是查询id小于等于3或者年龄大于40的值
+    grade = Grades.objects.filter(students__scontend__contains='詹姆斯')   #描述中带有‘詹姆斯’这三个字的数据是属于哪个班级的
+    print(grade)
+    maxAge = Students.stuObj2.aggregate(Max('sage'))
+    print(maxAge)
     return render(request,'myApp/students.html',{'students':studentsList})
 
 
@@ -54,3 +63,19 @@ def addstudents2(request):
     stu = Students.createStudent("薛之谦",31,True,grade,"我是薛之谦","2019-1-20","2019-1-20")
     stu.save()
     return HttpResponse("来了，老弟")
+
+
+from django.db.models import F,Q
+def grades(request):
+    g = Grades.objects.filter(gboynum__gt=F('ggirlnum'))
+    print(g)
+    return HttpResponse("ooookkk")
+
+
+
+
+
+
+
+
+

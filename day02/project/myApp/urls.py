@@ -12,4 +12,5 @@ urlpatterns = [
 
     url(r'^addstudents/$', views.addstudents),
     url(r'^addstudents2/$', views.addstudents2),
+    url(r'^grades/$', views.grades),
 ]
