@@ -1,0 +1,188 @@
+
+视图：
+	1.概述：
+		1） 作用 ： 视图接受web请求，并响应web请求
+		2） 本质：  视图就是一个python中的函数
+		3） 响应的内容：  
+					网页
+						1. 重定向
+						2. 错误视图  	 400  ；  500   ； 400
+					重定向
+					JSON数据
+					
+	2. 配置url：
+		1）  配置流程 ： 制定根级url配置文件， 配置settings.py文件中的 ROOT_URLCONF = 'project.urls' 。 一般不用修改，因为默认给我们配置了。
+		2）  urlpatterns ：  一个url实例的列表
+							url对象  ，正则表达式   视图名称    名称
+		3）  uri匹配正则的注意事项：
+								1. 如果想从url中获取一个值，需要对正则加小括号
+								2. 匹配正则前方不需要加反斜杠
+								3. 正则前需要加r表示字符串不转义
+								
+		4） 引入其他url配置：
+							1. 在应用中创建urls.py文件，定义本应用的url配置，在工程urls.py文件中使用include()方法。 
+								代码示例：
+								from django.conf.urls import url,include
+								from django.contrib import admin
+
+								urlpatterns = [
+									url(r'^admin/', admin.site.urls),
+									url(r'^', include('myApp.urls',namespace='myApp')),
+								]
+		
+		5） URL的反向解析：
+						1. 概述： 如果在视图、模板中使用了硬编码，在url配置发生改变时，动态生成链接的地址
+						2. 解决： 在使用链接时，通过url配置的名称，动态生成url地址
+						3. 作用： 在使用url模板里会使用
+	
+	3. 视图函数：
+		1）定义视图  
+				1. 本质： 一个函数
+				2. 视图参数： 第一个参数：(request)一个HttpRequest的实例
+							  第二个参数： 通过正则表达式获取的参数
+				3. 位置：	一般在views.py 文件下定义
+		2） 错误视图
+				1. 404视图  —— 在找不到网页时(url匹配不成功)返回
+							   在templates目录下定义404.html
+									request_path  ：导致错误的网址
+									404.html简单代码：
+										<!DOCTYPE html>
+										<html lang="en">
+										<head>
+											<meta charset="UTF-8">
+											<title>404页面</title>
+										</head>
+										<body>
+											<h1>页面丢失</h1>
+											<h2>{{ request_path }}</h2>
+										</body>
+										</html>			
+							——  配置settings.py   
+									DEBUG     ：如果为True永远不会调用404.html页面
+									ALLOWED_HOSTS=['*']     : 填*表示允许任何人访问
+									
+				2. 500视图  —— 在视图代码中出现错误(服务器代码)
+				3. 400视图  —— 错误出现在客户的操作
+				
+	4. HttpRequest对象
+		1） 概述：
+			1. 服务器接收http请求后，会根据报文创建HttpRequest对象
+			2. 视图的第一个参数就是HttpRequest对象
+			3. django创建的，之后调用视图时传递给视图
+		2） 属性：
+			1. path    请求的完整路径(不包括域名和端口)
+			2. method  表示请求的方式，常用的有GET,POST
+			3. encoding   表示浏览器提交的数据的编码方式，一般为utf-8
+			4. GET		类似于字典的对象，包含了get请求的所有参数
+			5. POST     类似于字典的对象，包含了post请求的所有参数
+			6. FILES	类似于字典的对象，包含了上传的文件
+			7. COOKIES	 就是字典，包含所有的cookie
+			8. session	类似于字典的对象，表示当前会话			
+		3） 方法：
+			1. is_ajax()	如果是通过XMLHttpRequest发起的，这个函数会返回True
+			
+		4） QueryDict对象：
+			1. request对象中的GET，POST都属于QueryDict对象
+			2. 方法：
+				get()	作用：根据键获取值， 只能获取一个值（?a=1&b=2&c=3） 一个a
+				getlist()	作用：将键的值以列表的形式返回， 可以获取多个值 （?a=1&a=2&c=3）两个a
+		
+		5)  GET属性
+			1. 获取浏览器传递过来给服务器的数据
+				一个a的情况：http://127.0.0.1:8000/myapp/get1/?a=1&b=2&c=3
+					代码示例：  查看views.py 文件里的get1  
+				二个a的情况：http://127.0.0.1:8000/myapp/get2/?a=1&a=2&c=3
+					代码示例：  查看views.py 文件里的get2
+
+		6） POST属性
+			1. 使用表单提交实现post请求。代码查看： register.html
+			2. 关闭csrf
+			3. 视图代码查看views.py 文件里的 showregister 和 register
+			
+	5. HttpResponse对象
+		1)  概述：
+			1. 给浏览器返回数据
+			2. HttpRequest对象是由django创建的， HttpResponse对象是由程序员创建的
+		2） 用法：
+			1. 不调用模板:  return HttpResponse('ok')
+			2. 调用模板:   return render(request, 'myApp/register.html')
+			3. render方法：
+				1. 原型：  render(request,templateName[,context])
+				2. 作用： 结合页面数据和模板，返回完整的html页面
+				3. 参数：
+					request：  请求体对象
+					templateName:  模板路径
+					context : 传递给需要渲染在模板上的数据
+		3） 属性：
+			1. content  : 表示返回内容的类型
+			2. charset  : 编码格式
+			4. status_code ； 响应状态码
+			5. content-type： 指定输出的MIME类型
+			代码查看： views.py 文件里的showresponse
+		4） 方法：
+			1. init ： 使用页面内容实例化HttpResponse对象
+			2. write(content) ： 以文本的形式写入
+			3. flush() ： 以文本的形式输入缓冲区
+			4. set_cookie(key,value='',max_age=None,exprise=None) :    代码示例： views.py 文件里的cookietest
+			5. delete_cookie(key)   : 删除cookie，如果删除一个不存在的key，就当什么都没发生
+		5） 子类HttpResponseRedirect
+			需要导入该包
+			1. 功能： 可以重定向，服务器端的跳转
+			2. 简写： redirect(to)  ，to推荐使用反向解析
+			代码示例：views.py 文件里的 redirect1 重定向到 redirect2
+			
+		6)  子类JsonResponse
+			1. 返回json数据，一般用于异步请求
+			2. __init__(self,data)
+			3. data    字典对象
+			注意： Content-type类型为application/json
+	
+	6. 状态保持
+		1） 概述：
+			http协议是无状态的，每次请求都是一个新的请求，不记得以前的请求
+			客户端与服务器端的一次通信就是一次会话
+			实现状态保持，在客户端或者服务端存储有关会话的数据
+			存储方式
+				1. cookie    所有的数据存储在客户端，不要存敏感数据
+				2. session	 所有的数据存储在服务端，在客户端用cookie存储session_id
+			状态保持的目的：  在一段时间内跟踪请求者的状态，可以实现跨页面访问当前的请求者的数据
+			注意：不同的请求者之间不会共享这个数据，与请求者一一对应
+		
+		2） 启用session ：   在settings文件中 INSTALLED_APPS里 'django.contrib.sessions',  一般不用写，因为默认给我们配置了。
+											  MIDDLEWARE 里 'django.contrib.sessions.middleware.SessionMiddleware',   也默认启用了
+		3） 使用session
+			1. 启用session后，每个HttpRequest对象都有一个session属性，就是一个类似字典的对象
+			2. get(key,default=None)     根据键获取session值
+			3. clear()	 清空所有的会话
+			4. flush()	 删除当前的会话并删除会话的cookie
+			
+			
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
