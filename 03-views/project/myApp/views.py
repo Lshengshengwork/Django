@@ -93,12 +93,18 @@ def showmain(request):
     username = request.POST.get('username')
     # 存储session
     request.session['name'] = username
+    # session 10秒后过期
+    request.session.set_expiry(10)
     return redirect('/myapp/main')
 
 
-
-
-
+#删除session
+from django.contrib.auth import logout
+def quit(request):
+    logout(request)
+    # request.session.clear()
+    # request.session.flush()
+    return redirect('/myapp/main')
 
 
 

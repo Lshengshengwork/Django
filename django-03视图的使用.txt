@@ -155,6 +155,15 @@
 			2. get(key,default=None)     根据键获取session值
 			3. clear()	 清空所有的会话
 			4. flush()	 删除当前的会话并删除会话的cookie
+			代码示例： ：views.py 文件里的 main 、login 、showmain 、quit
+		
+		4） 设置过期时间
+			1. set_expiry(value)
+			2. 如果不设置，两个星期后过期
+			3. 整数 ，     示例： request.session.set_expiry(10)
+			4. 时间对象  
+			5. 0    关闭浏览器时失效  
+			6. None  永不过期
 			
 			
 				
